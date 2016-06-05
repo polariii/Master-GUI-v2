@@ -22,7 +22,7 @@ function varargout = MasterGUI(varargin)
 
 % Edit the above text to modify the response to help MasterGUI
 
-% Last Modified by GUIDE v2.5 05-Jun-2016 14:12:42
+% Last Modified by GUIDE v2.5 05-Jun-2016 14:02:41
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -190,16 +190,6 @@ end
 
 % --- Executes on selection change in popupmenu_dataimport_selectsource.
 function popupmenu_dataimport_selectsource_Callback(hObject, eventdata, handles)
-
-switch get(hObject,'Value')
-    case 1
-        set(handles.uipanel_dataimport_datafeed,'Visible','on')
-        set(handles.uipanel_dataimport_xlsfile,'Visible','off')        
-    case 2
-        set(handles.uipanel_dataimport_datafeed,'Visible','off')
-        set(handles.uipanel_dataimport_xlsfile,'Visible','on')
-end
-        
 end
 % --- Executes during object creation, after setting all properties.
 function popupmenu_dataimport_selectsource_CreateFcn(hObject, eventdata, handles)
@@ -434,12 +424,12 @@ while ~done
             AC=fillts(AC,'se');
     end
     dates=AC.dates;
+    size(dates);
     prices=fts2mat(AC);
+    size(prices);
     benchmark=prices(:,1);
     prices(:,1)=[];
     
-    assignin('base','dates_Y',dates)
-
     updateImportDataPage(handles,prices,benchmark,dates,stock_names,index_T);
  done=1;
 end
@@ -512,34 +502,31 @@ if (size(rawdata,1) < 10) || (size(rawdata,2) < 4)
     h = msgbox('Too little data for analysis', 'Error','error');
     return
 end
-
-date=get(handles.checkbox_dates,'Value');
+header=get(handles.header,'Value');
+date=get(handles.dates,'Value');
 date_I=get(handles.popupmenu_dateFormat,'Value');
 date_format=get(handles.popupmenu_dateFormat,'String');
-date_format=date_format{date_I}
+date_format=date_format{I}
 
-if date
     dates = rawdata(2:end,1);
-    assignin('base','dates',dates)
-    try
-        dates = x2mdate(cell2mat(dates));
-    catch ME
-        h=msgbox('Date failed, probably wrong dateformat','Error','error');
-    end
     
+    try
+        dates = datenum(x2mdate(cell2mat(dates)),date_format);
+    catch 
+        h=msgbox('
     rawdata(:,1)=[];
 else
     dates = []
 end
 
-if isa(rawdata(1,:),'numeric')
-    priceslabels=[];
-else
-    priceslabels=rawdata(1,:);
-end
-       
 
-if get(handles.checkbox_bench,'Value')
+if header
+    priceslabels=rawdata(1,:);
+else
+    priceslabels=[];
+       
+end
+if get(handles.benchmark,'Value')
     benchmark=cell2mat(rawdata(2:end,1));
     benchmarklab=priceslabels(1);
     priceslabels=priceslabels(2:end);
@@ -1804,3 +1791,4 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 end
+
