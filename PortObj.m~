@@ -336,14 +336,23 @@ classdef PortObj < handle
             CVAR_ret = this.CVAR_ret*this.businessdays; CVAR_rsk=this.CVAR_rsk;
             CVAR_std=this.CVAR_std*sqrt(this.businessdays); w_MV=this.w_MV; w_c=this.w_C;
         end
-        function [VaR,CVaR,CVaR_dev] = computeAssetCVaR(this);
+        function [VaR,CVaR] = computeAssetCVaR(this);
             rets=this.returns;
-            [VaR,CVaR]=estimateCVaR(rets,speye(size(rets,2)),0.95);
+            sorted_returns=sort(rets);
+            [N,M]=size(rets);
+            VaR_index=ceil((1-this.alpha)*N)
+            VaR=sorted_returns(VaR_index,:);
+            N*(1-this.alpha)-VaR_index
+            CVaR=(VaR + sum(sorted_returns(1:VaR_index-1,:)))/((1-this.alpha)*N);
         end
         
         function [VaR,CVaR] = computeBenchCVaR(this);
             rets=tick2ret(this.benchmark,this.dates,'Continuous');
-            [VaR,CVaR]=estimateCVaR(rets,1,0.95);
+            sorted_returns=sort(rets);
+            [N,M]=size(rets);
+            VaR_index=ceil((1-this.alpha)*N);
+            VaR=sorted_returns(VaR_index,:);
+            CVaR=(VaR*(VaR_index - N*(1-this.alpha)) + sum(sorted_returns(1:VaR_index-1,:)))/((1-this.alpha)*N);
         end
         function [VaR,CVaR] = computeHistoricalVaR(this,pf_number,confidence_level,axes_handle)
         % Compute and visualize historical Value at Risk
@@ -387,9 +396,11 @@ classdef PortObj < handle
                 sorted_returns = sort(returns);
                 % Store the number of returns
                 num_returns = numel(returns);
-                [VaR,CVaR]=estimateCVaR(returns,1,confidence_level);
-                VaR=-VaR;
-                CVaR=-CVaR;
+                % Calculate the index of the sorted return that will be VaR
+                VaR_index = ceil((1-confidence_level)*num_returns);
+                % Use the index to extract VaR from sorted returns
+                VaR = sorted_returns(VaR_index);
+                CVaR=(VaR*(VaR_index - N*this.alpha) + sum(sorted_returns(1:VaR_index-1,:)))/((1-this.alpha)*N);
 
                 
             end
