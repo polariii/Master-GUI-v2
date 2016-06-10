@@ -3,7 +3,7 @@ function [VaR,CVaR,CVaR_dev]=estimateCVaR(Scenarios,pwgt,alpha)
 pnum = size(pwgt,2);
 
 S = size(Scenarios,1);
-ka = ceil(alpha*S)		% location of cut
+ka = ceil(alpha*S);		% location of cut
 
 CVaR = zeros(pnum, 1);
 
