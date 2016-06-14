@@ -328,7 +328,7 @@ function popupmenu_index_Callback(hObject, eventdata, handles)
 I=get(hObject,'Value');
 switch I
     case 2
-        m=29;
+        m=30;
     case 3
         m=98;
     case 4
@@ -411,6 +411,7 @@ while ~done
     else
         index_T=Ind(I);
     end
+    
     if get(handles.popupmenu_MissingData,'Value')==4
         NAN=1;
     else
@@ -1256,7 +1257,7 @@ function updateResultsPage(handles)
     axes(handles.axes_results_efficientfrontier);
     set(handles.axes_results_efficientfrontier,'Visible','on');
     hold('on');
-    handles.model.getRiskType
+    
     switch handles.model.getRiskType
         case 'MV'
             % Plot efficient frontier and individual assets

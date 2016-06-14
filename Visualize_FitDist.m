@@ -135,7 +135,7 @@ else
 end
 assignin('base','D',D)
 
-data=[[D.NLogL]' [D.AIC]' [D.BIC]']
+data=[[D.NLogL]' [D.AIC]' [D.BIC]'];
 names=fieldnames(D);
 names=names(2:4);
 for i =1:length([D.NLogL])

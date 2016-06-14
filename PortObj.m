@@ -64,7 +64,7 @@ classdef PortObj < handle
         function benchmarklabel = getBenchmarkLabel(this), benchmarklabel = this.benchmarklabel;                        end
         function [Mu,Sigma,an_rets,an_rsk]=getStatistics(this)
             if isempty(this.cov)
-                [Mu,Sigma,an_rets,an_rsk]=computeStatistics(this,this.returns)
+                [Mu,Sigma,an_rets,an_rsk]=computeStatistics(this,this.returns);
                 this.mean=Mu; this.cov=Sigma;
                 this.an_rets=an_rets; this.an_rsk=an_rsk;
             else
@@ -152,7 +152,7 @@ classdef PortObj < handle
                 case 'norm'
                     %[Mu,Sigma,~,~]=this.getStatistics;
                      %[Mu,Sigma]=ewstats(returns,1);                   
-                     [Mu,Sigma]=ecmnmle(returns);
+                    [Mu,Sigma]=ecmnmle(returns);
                     scenarios=mvnrnd(Mu,Sigma,20000);
                     
                 case 'studT'
@@ -425,7 +425,7 @@ classdef PortObj < handle
                     hold('off');
                     box('off');
                     set(axes_handle,'YTickLabel',[]);
-                    title(['Monthly Value at Risk: ',sprintf('%2.2f',VaR),'%'],'FontSize',9);
+                    title(['Value at Risk: ',sprintf('%2.2f',VaR),'%'],'FontSize',9);
                     vline(CVaR,'--r','CVaR')
                 end
             end
